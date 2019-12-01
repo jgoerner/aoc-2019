@@ -6,6 +6,7 @@
 ## How to run this code
 1. clone this repository `git clone https://github.com/jgoerner/aoc-2019`
 2. run the tests `./gradlew test`
+3. investigate the test results at `/build/reports/tests/test/index.html`
 
 ## Implemented Challenges
 - [Day 1](./src/main/kotlin/aoc/Day01.kt)
