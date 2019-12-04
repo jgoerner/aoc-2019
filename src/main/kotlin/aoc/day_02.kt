@@ -122,6 +122,7 @@
 package aoc
 
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 
 /**
@@ -149,32 +150,34 @@ fun processIntcode(intcode: List<Int>): List<Int> = intcode
  * Applies the [processIntcode] function to the given input
  */
 fun main() {
-    // General Input
-    val input = File("src/main/resources/day02/input.txt")
-            .readLines()
-            .first()
-            .split(",")
-            .map{ it.toInt()}
+    val executionTime = measureTimeMillis {
+        // General Input
+        val input = File("src/main/resources/day02/input.txt")
+                .readLines()
+                .first()
+                .split(",")
+                .map { it.toInt() }
 
-    // PartOne
-    input.toMutableList().also { inp ->
-        mapOf(1 to 12, 2 to 2).forEach { (k, v) -> inp[k] = v }
-        println("PART ONE - ${processIntcode(inp).first()}")
-    }
+        // PartOne
+        input.toMutableList().also { inp ->
+            mapOf(1 to 12, 2 to 2).forEach { (k, v) -> inp[k] = v }
+            println("PART ONE - ${processIntcode(inp).first()}")
+        }
 
-    // PartTwo
-    for (noun in 0..99) {
-        for (verb in 0..99) {
-            // execute intcode per pair
-            input.toMutableList().also {
-                mapOf(1 to noun, 2 to verb).forEach { (k, v) -> it[k] = v }
-                if (processIntcode(it).first() == 19690720){
-                    println("PART TWO - ${100 * noun + verb} (verb=$verb and noun=$noun)")
-                    return
+        // PartTwo
+        for (noun in 0..99) {
+            for (verb in 0..99) {
+                // execute intcode per pair
+                input.toMutableList().also {
+                    mapOf(1 to noun, 2 to verb).forEach { (k, v) -> it[k] = v }
+                    if (processIntcode(it).first() == 19690720) {
+                        println("PART TWO - ${100 * noun + verb} (verb=$verb and noun=$noun)")
+                        return@measureTimeMillis
+                    }
                 }
-            }
 
+            }
         }
     }
-
+    println("\n[elapsed time: $executionTime ms]")
 }

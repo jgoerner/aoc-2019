@@ -74,6 +74,8 @@ package aoc
 
 import java.io.File
 import kotlin.math.floor
+import kotlin.system.measureNanoTime
+import kotlin.system.measureTimeMillis
 
 
 const val MINIMAL_MASS_FOR_FUEL_INCREMENT = 6
@@ -97,11 +99,14 @@ fun massToFuel(mass: Int, simple: Boolean = true): Int = if (simple) {
  * Applies the [massToFuel] function to the given input
  */
 fun main() {
-    var totalFuelSimple = 0
-    var totalFuelComplex = 0
-    File("src/main/resources/day01/input.txt").forEachLine { line ->
-        totalFuelSimple += massToFuel(line.toInt())
-        totalFuelComplex += massToFuel(line.toInt(), simple=false)
+    val executionTime = measureTimeMillis {
+        var totalFuelSimple = 0
+        var totalFuelComplex = 0
+        File("src/main/resources/day01/input.txt").forEachLine { line ->
+            totalFuelSimple += massToFuel(line.toInt())
+            totalFuelComplex += massToFuel(line.toInt(), simple = false)
+        }
+        println("Total fuel consumption:\nsimple\t$totalFuelSimple\ncomplex\t$totalFuelComplex")
     }
-    println("Total fuel consumption:\n\nsimple\t$totalFuelSimple\ncomplex\t$totalFuelComplex")
+    println("\n[elapsed time: $executionTime ms]")
 }
