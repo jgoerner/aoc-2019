@@ -99,7 +99,7 @@ fun massToFuel(mass: Int, simple: Boolean = true): Int = if (simple) {
 fun main() {
     var totalFuelSimple = 0
     var totalFuelComplex = 0
-    File("src/main/resources/Day01/input.txt").forEachLine { line ->
+    File("src/main/resources/day01/input.txt").forEachLine { line ->
         totalFuelSimple += massToFuel(line.toInt())
         totalFuelComplex += massToFuel(line.toInt(), simple=false)
     }
