@@ -9,4 +9,5 @@
 3. investigate the test results at `/build/reports/tests/test/index.html`
 
 ## Implemented Challenges
-- [Day 1](./src/main/kotlin/aoc/Day01.kt)
+- [Day 1](./src/main/kotlin/aoc/day_01.kt)
+- [Day 2](./src/main/kotlin/aoc/day_02.kt)
