@@ -1,6 +1,5 @@
 package aoc
 
-import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -319,4 +318,79 @@ class Day03Test {
         // then
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `should calculate distance of single Path`(){
+        // given
+        val (start, intersection) = listOf(Point(0, 0), Point(5, 0))
+        val path = start.move(Direction(Orientation.RIGHT, 10))
+        val expected = 5
+
+        // when
+        val actual = stepsAlongPath(intersection, path)
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should calculate distance of multiple Paths`(){
+        // given
+        val (start, intersection) = listOf(Point(0, 0), Point(2, 2))
+        val paths = listOf("R2,U2","U2,R2")
+                .map{ start.move(*Direction.fromInstructions(it).toTypedArray()) }
+                .toTypedArray()
+        val expected = 8
+
+        // when
+        val actual = stepsAlongPath(intersection, *paths)
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should cache previous distance for single path`(){
+        // given
+        // given
+        val (start, intersection) = listOf(Point(0, 0), Point(2, 2))
+        val path = start.move(*Direction.fromInstructions("R2,U4,R2,D2,L4").toTypedArray())
+        val expected = 4
+
+        // when
+        val actual = stepsAlongPath(intersection, path)
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should cache previous distance for multiple paths`(){
+        // given
+        val (start, intersection) = listOf(Point(0, 0), Point(2, 2))
+        val paths = listOf("R2,U4,R2,D2,L4", "U2,R4,U2,L2,D4")
+                .map{ start.move(*Direction.fromInstructions(it).toTypedArray()) }
+                .toTypedArray()
+        val expected = 8
+
+        // when
+        val actual = stepsAlongPath(intersection, *paths)
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should convert R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51 & U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 to 410 steps`(){
+        // given
+        val instructions = listOf("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7")
+        val expected = 410
+
+        // when
+        val actual = findSteps(instructions)
+
+        // then
+        assertEquals(expected, actual)
+    }
 }
+

@@ -99,6 +99,7 @@ package aoc
 
 import java.io.File
 import kotlin.math.abs
+import kotlin.math.min
 import kotlin.system.measureTimeMillis
 
 /**
@@ -134,6 +135,21 @@ data class Point(val x: Int, val y: Int)
  *
  */
 fun Point.distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
+
+/**
+ *
+ */
+fun stepsAlongPath(point: Point, vararg paths: Path) : Int{
+    var distance = 0
+    paths.forEach {
+        var partialDistance = Int.MAX_VALUE
+        for ((cnt, p: Point) in it.points.withIndex()) {
+            if (p == point) { partialDistance = min(partialDistance, cnt)}
+        }
+        distance += partialDistance
+    }
+    return distance
+}
 
 /**
  *
@@ -183,17 +199,14 @@ fun Path.findIntersections(path: Path) : Set<Point> = this.points.toSet().inters
  */
 fun findDistance(instructions: List<String>): Int {
     // list to collect paths
-    val paths = mutableListOf<Path>()
-
-    // process each set of instructions
-    instructions.forEach {
-        paths.add(Point(0, 0).move(*Direction.fromInstructions(it).toTypedArray()))
+    val paths = instructions.map {
+        Point(0, 0).move(*Direction.fromInstructions(it).toTypedArray())
     }
 
 
     // find intersections
     val intersections = mutableSetOf<Point>()
-    for (i in 0 until paths.size){
+    for (i in paths.indices){
         for (j in i+1 until paths.size)
             intersections.addAll(paths[i].findIntersections(paths[j]))
     }
@@ -205,14 +218,41 @@ fun findDistance(instructions: List<String>): Int {
             ?.distance(Point(0, 0)) ?: -1
 }
 
+/**
+ *
+ */
+fun findSteps(instructions: List<String>): Int {
+    // list to collect paths
+    val paths = instructions.map {
+        Point(0, 0).move(*Direction.fromInstructions(it).toTypedArray())
+    }
+
+
+    // find intersections
+    val intersections = mutableSetOf<Point>()
+    for (i in paths.indices){
+        for (j in i+1 until paths.size)
+            intersections.addAll(paths[i].findIntersections(paths[j]))
+    }
+
+    // find closest point (dismissing origin itself)
+    return intersections
+            .filter { it != Point(0, 0) }
+            .map { stepsAlongPath(it, *paths.toTypedArray()) }
+            ?.min() ?: -1
+}
 
 /**
  *
  */
 fun main() {
     val executionTime = measureTimeMillis {
-        val result = findDistance(File("src/main/resources/day03/input.txt").readLines())
-        println("Minimal distance from central port to intersection is $result")
+        val firstResult = findDistance(File("src/main/resources/day03/input.txt").readLines())
+        println("Minimal manhatten distance from central port to intersection is $firstResult")
+
+        val secondResult = findSteps(File("src/main/resources/day03/input.txt").readLines())
+        println("Minimal time wise distance from central port to intersection is $secondResult")
+
     }
     println("\n[elapsed time: $executionTime ms]")
 }
