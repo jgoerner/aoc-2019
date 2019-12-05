@@ -103,14 +103,18 @@ import kotlin.math.min
 import kotlin.system.measureTimeMillis
 
 /**
- *
+ * Possible movements on the grid
  */
 enum class Orientation { UP, DOWN, LEFT, RIGHT }
 
 /**
- *
+ * Direction composed of an [orientation] and a [magnitude]
  */
 data class Direction(val orientation: Orientation, val magnitude: Int) {
+
+    /**
+     * Companion object to realise "static" [fromInstructions] factory method
+     */
     companion object {
         fun fromInstructions(instructions: String) : List<Direction> {
             return instructions.split(",").mapNotNull { instruction ->
@@ -127,32 +131,12 @@ data class Direction(val orientation: Orientation, val magnitude: Int) {
 }
 
 /**
- *
+ * Point in a 2d cartesian coordinate system based on [x] and [y]
  */
 data class Point(val x: Int, val y: Int)
 
 /**
- *
- */
-fun Point.distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
-
-/**
- *
- */
-fun stepsAlongPath(point: Point, vararg paths: Path) : Int{
-    var distance = 0
-    paths.forEach {
-        var partialDistance = Int.MAX_VALUE
-        for ((cnt, p: Point) in it.points.withIndex()) {
-            if (p == point) { partialDistance = min(partialDistance, cnt)}
-        }
-        distance += partialDistance
-    }
-    return distance
-}
-
-/**
- *
+ * Moves a point along n [directions]
  */
 fun Point.move(vararg directions: Direction): Path {
     var result = Path(listOf(this))
@@ -171,31 +155,50 @@ fun Point.move(vararg directions: Direction): Path {
     return result
 }
 
+/**
+ * Calculates the manhattan distance to another [point]
+ */
+fun Point.distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
 
 /**
- *
+ * Cumulates steps of minimal steps from (0|0) to [point] via [paths]
+ */
+fun stepsAlongPath(point: Point, vararg paths: Path) : Int{
+    var distance = 0
+    paths.forEach {
+        var partialDistance = Int.MAX_VALUE
+        for ((cnt, p: Point) in it.points.withIndex()) {
+            if (p == point) { partialDistance = min(partialDistance, cnt)}
+        }
+        distance += partialDistance
+    }
+    return distance
+}
+
+/**
+ * Path composed of multiple adjacent [points]
  */
 data class Path(val points: List<Point>)
 
 /**
- *
+ * Returns current "head" of the path
  */
 val Path.head: Point
         get() = this.points.last()
 
 /**
- *
+ * Combines a path with another [path]
  */
 fun Path.append(path: Path) = Path(this.points + path.points.drop(1))
 
 /**
- *
+ * Finds all intersections between a path and another [path]
  */
 fun Path.findIntersections(path: Path) : Set<Point> = this.points.toSet().intersect(path.points.toSet())
 
 
 /**
- *
+ * Finds the minimum distance between (0|0) and all intersections among  n paths constructed from [instructions]
  */
 fun findDistance(instructions: List<String>): Int {
     // list to collect paths
@@ -219,7 +222,7 @@ fun findDistance(instructions: List<String>): Int {
 }
 
 /**
- *
+ * Finds the minimum number of steps between (0|0) and all intersections among n paths constructed from [instructions]
  */
 fun findSteps(instructions: List<String>): Int {
     // list to collect paths
@@ -239,14 +242,15 @@ fun findSteps(instructions: List<String>): Int {
     return intersections
             .filter { it != Point(0, 0) }
             .map { stepsAlongPath(it, *paths.toTypedArray()) }
-            ?.min() ?: -1
+            .min() ?: -1
 }
 
 /**
- *
+ * Applies the [findDistance] and [findSteps] function to the given input
  */
 fun main() {
     val executionTime = measureTimeMillis {
+
         val firstResult = findDistance(File("src/main/resources/day03/input.txt").readLines())
         println("Minimal manhatten distance from central port to intersection is $firstResult")
 
