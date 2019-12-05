@@ -11,3 +11,4 @@
 ## Implemented Challenges
 - [Day 1](./src/main/kotlin/aoc/day_01.kt)
 - [Day 2](./src/main/kotlin/aoc/day_02.kt)
+- [Day 3](./src/main/kotlin/aoc/day_03.kt)
