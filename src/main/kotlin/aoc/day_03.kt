@@ -53,12 +53,53 @@
  * U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 = distance 135
  *
  * What is the Manhattan distance from the central port to the closest intersection?
+ *
+ *
+ * --- Part Two ---
+ *
+ *
+ * It turns out that this circuit is very timing-sensitive; you actually need to minimize the signal delay.
+ *
+ * To do this, calculate the number of steps each wire takes to reach each intersection; choose the intersection where
+ * the sum of both wires' steps is lowest. If a wire visits a position on the grid multiple times, use the steps value
+ * from the first time it visits that position when calculating the total value of a specific intersection.
+ *
+ * The number of steps a wire takes is the total number of grid squares the wire has entered to get to that location,
+ * including the intersection being considered. Again consider the example from above:
+ *
+ * ...........
+ * .+-----+...
+ * .|.....|...
+ * .|..+--X-+.
+ * .|..|..|.|.
+ * .|.-X--+.|.
+ * .|..|....|.
+ * .|.......|.
+ * .o-------+.
+ * ...........
+ * In the above example, the intersection closest to the central port is reached after 8+5+5+2 = 20 steps by the first
+ * wire and 7+6+4+3 = 20 steps by the second wire for a total of 20+20 = 40 steps.
+ *
+ * However, the top-right intersection is better: the first wire takes only 8+5+2 = 15 and the second wire takes only
+ * 7+6+2 = 15, a total of 15+15 = 30 steps.
+ *
+ * Here are the best steps for the extra examples from above:
+ *
+ * R75,D30,R83,U83,L12,D49,R71,U7,L72
+ * U62,R66,U55,R34,D71,R55,D58,R83 = 610 steps
+ *
+ * R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
+ * U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 = 410 steps
+ *
+ * What is the fewest combined steps the wires must take to reach an intersection?
+ *
  */
 
 package aoc
 
-import kotlin.math.pow
-import kotlin.math.sqrt
+import java.io.File
+import kotlin.math.abs
+import kotlin.system.measureTimeMillis
 
 /**
  *
@@ -92,17 +133,28 @@ data class Point(val x: Int, val y: Int)
 /**
  *
  */
-fun Point.distance(point: Point) = sqrt((this.x.toDouble() + point.x).pow(2.0) + (this.y.toDouble() + point.y).pow(2.0))
+fun Point.distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
 
 /**
  *
  */
-fun Point.move(direction: Direction): Path = when(direction.orientation) {
-        Orientation.UP -> Path((0..direction.magnitude).map { Point(this.x, this.y + it) }.toList())
-        Orientation.DOWN -> Path((0..direction.magnitude).map { Point(this.x, this.y - it) }.toList())
-        Orientation.LEFT -> Path((0..direction.magnitude).map { Point(this.x - it, this.y) }.toList())
-        Orientation.RIGHT -> Path((0..direction.magnitude).map { Point(this.x + it, this.y) }.toList())
+fun Point.move(vararg directions: Direction): Path {
+    var result = Path(listOf(this))
+    var head = this.copy()
+
+    directions.forEach {dir ->
+        result = result.append(when(dir.orientation) {
+            Orientation.UP -> Path((0..dir.magnitude).map { Point(head.x, head.y + it) }.toList())
+            Orientation.DOWN -> Path((0..dir.magnitude).map { Point(head.x, head.y - it) }.toList())
+            Orientation.LEFT -> Path((0..dir.magnitude).map { Point(head.x - it, head.y) }.toList())
+            Orientation.RIGHT -> Path((0..dir.magnitude).map { Point(head.x + it, head.y) }.toList())
+        })
+        head = result.head.copy()
+    }
+
+    return result
 }
+
 
 /**
  *
@@ -129,18 +181,15 @@ fun Path.findIntersections(path: Path) : Set<Point> = this.points.toSet().inters
 /**
  *
  */
-fun findDistance(instructions: List<String>): Double {
+fun findDistance(instructions: List<String>): Int {
     // list to collect paths
     val paths = mutableListOf<Path>()
 
     // process each set of instructions
-    instructions.map {
-        var path = Path(listOf(Point(0, 0)))
-        Direction.fromInstructions(it).forEach { d ->
-            path = path.append(path.head.move(d))
-        }
-        paths.add(path)
+    instructions.forEach {
+        paths.add(Point(0, 0).move(*Direction.fromInstructions(it).toTypedArray()))
     }
+
 
     // find intersections
     val intersections = mutableSetOf<Point>()
@@ -151,9 +200,9 @@ fun findDistance(instructions: List<String>): Double {
 
     // find closest point (dismissing origin itself)
     return intersections
-            .filterNot { it == Point(0, 0) }
+            .filter { it != Point(0, 0) }
             .minBy { it.distance(Point(0, 0)) }
-            ?.distance(Point(0, 0)) ?: -1.0
+            ?.distance(Point(0, 0)) ?: -1
 }
 
 
@@ -161,5 +210,9 @@ fun findDistance(instructions: List<String>): Double {
  *
  */
 fun main() {
-    println(findDistance(listOf("U3,R5", "R3,U5")))
+    val executionTime = measureTimeMillis {
+        val result = findDistance(File("src/main/resources/day03/input.txt").readLines())
+        println("Minimal distance from central port to intersection is $result")
+    }
+    println("\n[elapsed time: $executionTime ms]")
 }

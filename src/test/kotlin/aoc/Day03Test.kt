@@ -1,5 +1,6 @@
 package aoc
 
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -115,6 +116,30 @@ class Day03Test {
     }
 
     @Test
+    fun `should create path from point and multiple directions`() {
+        // given
+        val start = Point(0, 0)
+        val directions = arrayOf(
+                Direction(Orientation.RIGHT, 2),
+                Direction(Orientation.UP, 3)
+        )
+        val expected = Path(listOf(
+                Point(0, 0),
+                Point(1, 0),
+                Point(2, 0),
+                Point(2, 1),
+                Point(2, 2),
+                Point(2, 3)
+        ))
+
+        // given
+        val actual = start.move(*directions)
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
     fun `should append two paths`() {
         // given
         val firstPath = Point(0, 0).move(Direction(Orientation.UP, 3))
@@ -207,7 +232,7 @@ class Day03Test {
         // given
         val p1 = Point(0, 0)
         val p2 = Point(3, 4)
-        val expected= 5.0
+        val expected= 7
 
         // when
         val actual = p1.distance(p2)
@@ -251,11 +276,29 @@ class Day03Test {
         assertEquals(expected, actual)
     }
 
+
+
+    @Test
+    fun `should find intersections between R8,U5,L5,D3 and U7,R6,D4,L4`(){
+        // given
+        val start = Point(0, 0)
+        val (p1, p2) = listOf("R8,U5,L5,D3", "U7,R6,D4,L4")
+                .map{ Direction.fromInstructions(it) }
+                .map{ start.move(*it.toTypedArray()) }
+        val expected = setOf(Point(3,3), Point(6, 5))
+
+        // when
+        val actual = p1.findIntersections(p2).filter{ it != start }.toSet()
+
+        // then
+        assertEquals(expected, actual)
+    }
+
     @Test
     fun `should convert R75,D30,R83,U83,L12,D49,R71,U7,L72 & U62,R66,U55,R34,D71,R55,D58,R83 to 159`() {
         // given
         val instructions = listOf("R75,D30,R83,U83,L12,D49,R71,U7,L72", "U62,R66,U55,R34,D71,R55,D58,R83")
-        val expected = 159.0
+        val expected = 159
 
         // when
         val actual = findDistance(instructions)
@@ -268,7 +311,7 @@ class Day03Test {
     fun `should convert R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51 & U98,R91,D20,R16,D67,R40,U7,R15,U6,R7 to 135`() {
         // given
         val instructions = listOf("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51", "U98,R91,D20,R16,D67,R40,U7,R15,U6,R7")
-        val expected = 135.0
+        val expected = 135
 
         // when
         val actual = findDistance(instructions)
