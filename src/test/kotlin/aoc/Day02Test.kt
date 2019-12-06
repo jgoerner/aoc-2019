@@ -1,6 +1,6 @@
 package aoc
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Day02Test {

@@ -133,32 +133,56 @@ data class Direction(val orientation: Orientation, val magnitude: Int) {
 /**
  * Point in a 2d cartesian coordinate system based on [x] and [y]
  */
-data class Point(val x: Int, val y: Int)
+data class Point(val x: Int, val y: Int) {
 
-/**
- * Moves a point along n [directions]
- */
-fun Point.move(vararg directions: Direction): Path {
-    var result = Path(listOf(this))
-    var head = this.copy()
+    /**
+     * Moves a point along n [directions]
+     */
+    fun move(vararg directions: Direction): Path {
+        var result = Path(listOf(this))
+        var head = this.copy()
 
-    directions.forEach {dir ->
-        result = result.append(when(dir.orientation) {
-            Orientation.UP -> Path((0..dir.magnitude).map { Point(head.x, head.y + it) }.toList())
-            Orientation.DOWN -> Path((0..dir.magnitude).map { Point(head.x, head.y - it) }.toList())
-            Orientation.LEFT -> Path((0..dir.magnitude).map { Point(head.x - it, head.y) }.toList())
-            Orientation.RIGHT -> Path((0..dir.magnitude).map { Point(head.x + it, head.y) }.toList())
-        })
-        head = result.head.copy()
+        directions.forEach {dir ->
+            result = result.append(when(dir.orientation) {
+                Orientation.UP -> Path((0..dir.magnitude).map { Point(head.x, head.y + it) }.toList())
+                Orientation.DOWN -> Path((0..dir.magnitude).map { Point(head.x, head.y - it) }.toList())
+                Orientation.LEFT -> Path((0..dir.magnitude).map { Point(head.x - it, head.y) }.toList())
+                Orientation.RIGHT -> Path((0..dir.magnitude).map { Point(head.x + it, head.y) }.toList())
+            })
+            head = result.head.copy()
+        }
+
+        return result
     }
 
-    return result
+    /**
+     * Calculates the manhattan distance to another [point]
+     */
+    fun distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
 }
 
 /**
- * Calculates the manhattan distance to another [point]
+ * Path composed of multiple adjacent [points]
  */
-fun Point.distance(point: Point) = abs(this.x - point.x) + abs(this.y - point.y)
+data class Path(val points: List<Point>) {
+
+    /**
+     * Returns current "head" of the path
+     */
+    val head: Point
+        get() = this.points.last()
+
+    /**
+     * Combines a path with another [path]
+     */
+    fun append(path: Path) = Path(this.points + path.points.drop(1))
+
+    /**
+     * Finds all intersections between a path and another [path]
+     */
+    fun findIntersections(path: Path) : Set<Point> = this.points.toSet().intersect(path.points.toSet())
+
+}
 
 /**
  * Cumulates steps of minimal steps from (0|0) to [point] via [paths]
@@ -174,28 +198,6 @@ fun stepsAlongPath(point: Point, vararg paths: Path) : Int{
     }
     return distance
 }
-
-/**
- * Path composed of multiple adjacent [points]
- */
-data class Path(val points: List<Point>)
-
-/**
- * Returns current "head" of the path
- */
-val Path.head: Point
-        get() = this.points.last()
-
-/**
- * Combines a path with another [path]
- */
-fun Path.append(path: Path) = Path(this.points + path.points.drop(1))
-
-/**
- * Finds all intersections between a path and another [path]
- */
-fun Path.findIntersections(path: Path) : Set<Point> = this.points.toSet().intersect(path.points.toSet())
-
 
 /**
  * Finds the minimum distance between (0|0) and all intersections among  n paths constructed from [instructions]
