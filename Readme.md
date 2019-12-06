@@ -9,6 +9,7 @@
 3. investigate the test results at `/build/reports/tests/test/index.html`
 
 ## Implemented Challenges
-- [Day 1](./src/main/kotlin/aoc/day_01.kt)
-- [Day 2](./src/main/kotlin/aoc/day_02.kt)
-- [Day 3](./src/main/kotlin/aoc/day_03.kt)
+- [Day 01](./src/main/kotlin/aoc/day_01.kt) - The Tyranny of the Rocket Equation 🧮
+- [Day 02](./src/main/kotlin/aoc/day_02.kt) - 1202 Program Alarm 🚨
+- [Day 03](./src/main/kotlin/aoc/day_03.kt) - Crossed Wires ⚡️
+- [Day 04](./src/main/kotlin/aoc/day_04.kt) - Secure Container 🔢
