@@ -50,7 +50,7 @@ import kotlin.system.measureTimeMillis
 /**
  * Converts an [Int] into a list of single digits
  */
-fun Int.toDigits() = this.toString().toList().map { it.toInt() }
+fun Int.toDigits() = this.toString().toList().map { it.toString().toInt() }
 
 /**
  * Validates if an [Int] is inside a given range
