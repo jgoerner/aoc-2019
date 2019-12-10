@@ -78,22 +78,30 @@
 
 package aoc
 
+import java.io.File
 import java.lang.IllegalArgumentException
+import java.util.*
+import kotlin.system.measureTimeMillis
 
-data class ProgramState(val memory: List<Int> = listOf(), val running: Boolean = true, val pointer: Int = 0)
+data class ProgramState(
+        val memory: List<Int> = listOf(),
+        val running: Boolean = true,
+        val pointer: Int = 0,
+        val input: Stack<Int> = Stack(),
+        val output: List<Int> = listOf())
 
-data class Program(var state: ProgramState) {
+data class Program(var state: ProgramState, var verbose: Boolean = false) {
 
     fun run() {
         while(state.running){
             val instruction = Instruction.fromCode(state.memory[state.pointer])
             val newState = execute(instruction)
-            updateState(newState, true)
+            updateState(newState)
         }
     }
 
-    private fun updateState(newState: ProgramState, verbose: Boolean = false) {
-        if(verbose){ println(newState) }
+    private fun updateState(newState: ProgramState) {
+        if(this.verbose){ println("$state\n${"v".padEnd(8, ' ').repeat(state.toString().length / 8)}\n$newState\n") }
         state = newState
     }
 
@@ -106,23 +114,37 @@ data class Program(var state: ProgramState) {
     private fun readValues(instruction: Instruction) = (0 until instruction.operation.numParams )
             .map { readValue(it + 1, instruction.parameterModes[it]) }
 
-    private fun execute(instruction: Instruction) : ProgramState = when(instruction.operation) {
-        // TODO get rid of duplication
-        Operation.Addition -> {
-            val newMemory = state.memory.toMutableList()
-            val (x, y, z) = readValues(instruction)
-            newMemory[z] = x + y
-            state.copy(memory = newMemory, pointer = state.pointer + instruction.operation.numParams)
+    private fun execute(instruction: Instruction) : ProgramState {
+        val newMemory = state.memory.toMutableList()
+
+        when(instruction.operation) {
+            Operation.Addition -> {
+                val (x, y, z) = readValues(instruction)
+                newMemory[z] = x + y
+            }
+            Operation.Multiplication -> {
+                val (x, y, z) = readValues(instruction)
+                newMemory[z] = x * y
+            }
+            Operation.Read -> {
+                val x = state.input.pop()
+                val (z) = readValues(instruction)
+                newMemory[z] = x
+
+            }
+            Operation.Write -> {
+                val (z) = readValues(instruction)
+                val newOutput = state.output.toMutableList()
+                newOutput.add(state.memory[z])
+                return state.copy(pointer = state.pointer + instruction.operation.numParams + 1, output = newOutput)
+            }
+            Operation.Termination -> {
+                println("Final Ouput:\n${state.output}")
+                return state.copy(running = false)
+            }
         }
-        Operation.Multiplication -> {
-            val newMemory = state.memory.toMutableList()
-            val (x, y, z) = readValues(instruction)
-            newMemory[z] = x * y
-            state.copy(memory = newMemory, pointer = state.pointer + instruction.operation.numParams)
-        }
-        Operation.Read -> state.copy(running = false)
-        Operation.Write ->state.copy(running = false)
-        Operation.Termination -> state.copy(running = false)
+
+        return state.copy(memory = newMemory, pointer = state.pointer + instruction.operation.numParams + 1)
     }
 }
 
@@ -152,7 +174,7 @@ enum class Operation(val numParams: Int) {
             3 -> Read
             4 -> Write
             99 -> Termination
-            else -> throw IllegalArgumentException()
+            else -> throw IllegalArgumentException("$code is not a valid opcode")
         }
     }
 }
@@ -184,6 +206,17 @@ data class Instruction(val operation: Operation, val parameterModes: List<Parame
 
 
 fun main() {
+    val executionTime = measureTimeMillis {
 
+        val memory = File("src/main/resources/day05/input.txt")
+                .readLines()
+                .first()
+                .split(",")
+                .map { it.toInt() }
+        val input = Stack<Int>().also { it.add(1) }
+        val program = Program(ProgramState(memory = memory, input = input))
+        program.run()
+    }
+    println("\n[elapsed time: $executionTime ms]")
 }
 

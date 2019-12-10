@@ -1,7 +1,7 @@
 package aoc
 
-import org.junit.Ignore
 import java.lang.IllegalArgumentException
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -179,6 +179,35 @@ class Day05Test {
         // when
         program.run()
         val actual = program.state.memory
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should evaluate 3, 0, 99 with input 42 to 42, 0, 99`(){
+        // given
+        val input = Stack<Int>().also { it.add(42) }
+        val program = Program(ProgramState(memory=listOf(3, 0, 99), input=input))
+        val expected = listOf(42, 0, 99)
+
+        // when
+        program.run()
+        val actual = program.state.memory
+
+        // then
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `should write output`(){
+        // given
+        val program = Program(ProgramState(memory=listOf(4, 0, 99)))
+        val expected = listOf(4)
+
+        // when
+        program.run()
+        val actual = program.state.output
 
         // then
         assertEquals(expected, actual)
