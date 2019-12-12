@@ -13,3 +13,4 @@
 - [Day 02](./src/main/kotlin/aoc/day_02.kt) - 1202 Program Alarm 🚨
 - [Day 03](./src/main/kotlin/aoc/day_03.kt) - Crossed Wires ⚡️
 - [Day 04](./src/main/kotlin/aoc/day_04.kt) - Secure Container 🔢
+- [Day 05](./src/main/kotlin/aoc/day_05.kt) - Sunny with a Chance of Asteroids ☄️
