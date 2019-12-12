@@ -74,6 +74,7 @@
  *
  * After providing 1 to the only input instruction and passing all the tests, what diagnostic code does the program
  * produce?
+ *
  */
 
 package aoc
@@ -83,6 +84,9 @@ import java.lang.IllegalArgumentException
 import java.util.*
 import kotlin.system.measureTimeMillis
 
+/**
+ * Program state containing [memory], [running], [pointer], [input], [output] information
+ */
 data class ProgramState(
         val memory: List<Int> = listOf(),
         val running: Boolean = true,
@@ -90,8 +94,14 @@ data class ProgramState(
         val input: Stack<Int> = Stack(),
         val output: List<Int> = listOf())
 
+/**
+ * Program containing [state] and [running] information
+ */
 data class Program(var state: ProgramState, var verbose: Boolean = false) {
 
+    /**
+     * runs the program until [running] is false
+     */
     fun run() {
         while(state.running){
             val instruction = Instruction.fromCode(state.memory[state.pointer])
@@ -100,20 +110,31 @@ data class Program(var state: ProgramState, var verbose: Boolean = false) {
         }
     }
 
+    /**
+     * updates the [state]
+     */
     private fun updateState(newState: ProgramState) {
         if(this.verbose){ println("$state\n${"v".padEnd(8, ' ').repeat(state.toString().length / 8)}\n$newState\n") }
         state = newState
     }
 
-
+    /**
+     * Reads values based on [offset] and [mode]
+     */
     private fun readValue(offset: Int, mode: ParameterMode) = when(mode) {
         ParameterMode.Pointer -> state.memory[state.memory[state.pointer + offset]]
         ParameterMode.Immediate -> state.memory[state.pointer + offset]
     }
 
+    /**
+     * Reads values based on [instruction]
+     */
     private fun readValues(instruction: Instruction) = (0 until instruction.operation.numParams )
             .map { readValue(it + 1, instruction.parameterModes[it]) }
 
+    /**
+     * Executes a given [instruction]
+     */
     private fun execute(instruction: Instruction) : ProgramState {
         val newMemory = state.memory.toMutableList()
 
@@ -148,10 +169,17 @@ data class Program(var state: ProgramState, var verbose: Boolean = false) {
     }
 }
 
+/**
+ * Parameter modes
+ */
 enum class ParameterMode {
     Pointer, Immediate;
 
     companion object{
+
+        /**
+         * Factory to parse [code]
+         */
         fun fromCode(code: Int) : ParameterMode = when(code) {
             0 -> Pointer
             1 -> Immediate
@@ -160,6 +188,9 @@ enum class ParameterMode {
     }
 }
 
+/**
+ * Operations containing [numParams]
+ */
 enum class Operation(val numParams: Int) {
     Addition(3),
     Multiplication(3),
@@ -168,6 +199,10 @@ enum class Operation(val numParams: Int) {
     Termination(0);
 
     companion object{
+
+        /**
+         * Factory to parse [code]
+         */
         fun fromCode(code: Int) : Operation = when(code){
             1 -> Addition
             2 -> Multiplication
@@ -179,9 +214,16 @@ enum class Operation(val numParams: Int) {
     }
 }
 
+/**
+ * Instruction containing [operation] and [parameterModes]
+ */
 data class Instruction(val operation: Operation, val parameterModes: List<ParameterMode>){
 
     companion object{
+
+        /**
+         * Factory to parse [code]
+         */
         fun fromCode(code: Int) : Instruction{
             // extract op code
             val operation: Operation = Operation.fromCode(code % 100)
@@ -205,6 +247,12 @@ data class Instruction(val operation: Operation, val parameterModes: List<Parame
 }
 
 
+/**
+ * Applies the complete logic to Task 1
+ *
+ * Note: The current version of this program produces the correct output for Task 1
+ * but seems to be flawed as the rest of the output does not only contain 0s
+ */
 fun main() {
     val executionTime = measureTimeMillis {
 
