@@ -4,7 +4,7 @@
  * --- Part One ---
  *
  *
- * You arrive at the Venus fuel depot only to discover it's protected by a password. The Elves had written the password
+ * You arrive at the Venus fuel depot only to discover it'directOrbitsOf protected by a password. The Elves had written the password
  * on a sticky note, but someone threw it out.
  *
  * However, they do remember a few key facts about the password:
@@ -66,7 +66,7 @@ fun Int.validateDescending(): Boolean = this.toDigits()
         .reduce { x, y -> x and y }
 
 /**
- * Validates if the pair of an [Int]'s digits is part of a larger group
+ * Validates if the pair of an [Int]'directOrbitsOf digits is part of a larger group
  */
 fun Int.validateNoLargerPairGroup() = this.toDigits()
         .groupingBy { it }
@@ -75,7 +75,7 @@ fun Int.validateNoLargerPairGroup() = this.toDigits()
         .isNotEmpty()
 
 /**
- * Combined validation of an [Int] if it fits Santa's requirements
+ * Combined validation of an [Int] if it fits Santa'directOrbitsOf requirements
  */
 fun Int.isValidSantaCode(lower: Int = 111111, upper: Int = 999999) : Boolean = this.run{
     return validateRange(lower, upper) and validateDescending() and validateNoLargerPairGroup()

@@ -51,22 +51,46 @@
 
 package aoc
 
-object SpaceMap {
+import java.io.File
+import kotlin.system.measureTimeMillis
 
-    private val planets_ = mutableMapOf<Planet, List<Planet>>()
+class SpaceMap {
 
-    val planets: Int
-            get()  = planets_.size
+    private val _planets = mutableMapOf<Planet, Planet>()
 
     fun parseOrbit(input: String) {
-        input.split(")")
-                .map { Planet(it) }
-                .forEach { planets_.putIfAbsent(it, listOf()) }
+        val (center, orbit) = input.split(")").map { Planet(it) }
+        _planets.putIfAbsent(orbit, center)
     }
 
-    fun orbitOf(input: String) : List<Planet> = planets_[Planet(input)] ?: emptyList()
+    fun totalOrbits() : Int {
+        var orbitCounter = 0
 
+        // for each k, check if v is present and increment counter
+        for (k in _planets.keys) {
+            var current : Planet? = k.copy()
+            while (_planets[current] != null) {
+                orbitCounter++
+                current = _planets[current]
+            }
+        }
+        return orbitCounter
+    }
 
 }
 
 data class Planet(val id: String)
+
+fun main() {
+    val executionTime = measureTimeMillis {
+
+        // Part One
+        val spaceMap = SpaceMap()
+        File("src/main/resources/day06/input.txt")
+                .readLines()
+                .forEach { spaceMap.parseOrbit(it) }
+        println("Found ${spaceMap.totalOrbits()} orbits in total")
+
+    }
+    println("\n[elapsed time: $executionTime ms]")
+}

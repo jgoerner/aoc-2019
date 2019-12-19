@@ -83,7 +83,7 @@ const val MINIMAL_MASS_FOR_FUEL_INCREMENT = 6
 /**
  * Returns the estimated fuel for the given [mass].
  *
- * If [simple] is true the fuel's own weight is dismissed.
+ * If [simple] is true the fuel'directOrbitsOf own weight is dismissed.
  * Otherwise a recursive approach is taken to also include it.
  * For a detailed description of the algorithm please check the
  * description at the top of this file.

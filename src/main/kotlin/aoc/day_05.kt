@@ -28,11 +28,11 @@
  * Now, your ship computer will also need to handle parameters in mode 1, immediate mode. In immediate mode, a parameter
  * is interpreted as a value - if the parameter is 50, its value is simply 50.
  *
- * Parameter modes are stored in the same value as the instruction's opcode. The opcode is a two-digit number based only
+ * Parameter modes are stored in the same value as the instruction'directOrbitsOf opcode. The opcode is a two-digit number based only
  * on the ones and tens digit of the value, that is, the opcode is the rightmost two digits of the first value in an
  * instruction. Parameter modes are single digits, one per parameter, read right-to-left from the opcode: the first
- * parameter's mode is in the hundreds digit, the second parameter's mode is in the thousands digit, the third
- * parameter's mode is in the ten-thousands digit, and so on. Any missing modes are 0.
+ * parameter'directOrbitsOf mode is in the hundreds digit, the second parameter'directOrbitsOf mode is in the thousands digit, the third
+ * parameter'directOrbitsOf mode is in the ten-thousands digit, and so on. Any missing modes are 0.
  *
  * For example, consider the program 1002,4,3,4,33.
  *
@@ -61,7 +61,7 @@
  * after the instruction finishes. Because of the new instructions, this amount is no longer always 4.
  * Integers can be negative: 1101,100,-1,4,0 is a valid program (find 100 + -1, store the result in position 4).
  * The TEST diagnostic program will start by requesting from the user the ID of the system to test by running an input
- * instruction - provide it 1, the ID for the ship's air conditioner unit.
+ * instruction - provide it 1, the ID for the ship'directOrbitsOf air conditioner unit.
  *
  * It will then perform a series of diagnostic tests confirming that various parts of the Intcode computer, like
  * parameter modes, function correctly. For each test, it will run an output instruction indicating how far the result

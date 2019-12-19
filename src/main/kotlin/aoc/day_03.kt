@@ -5,7 +5,7 @@
  *
  *
  * The gravity assist was successful, and you're well on your way to the Venus refuelling station. During the rush back
- * on Earth, the fuel management system wasn't completely installed, so that's next on the priority list.
+ * on Earth, the fuel management system wasn't completely installed, so that'directOrbitsOf next on the priority list.
  *
  * Opening the front panel reveals a jumble of wires. Specifically, two wires are connected to a central port and extend
  * outward on a grid. You trace the path each wire takes as it leaves the central port, one wire per line of text
@@ -16,7 +16,7 @@
  * measurement. While the wires do technically cross right at the central port where they both start, this point does
  * not count, nor does a wire count as crossing with itself.
  *
- * For example, if the first wire's path is R8,U5,L5,D3, then starting from the central port (o), it goes right 8, up 5,
+ * For example, if the first wire'directOrbitsOf path is R8,U5,L5,D3, then starting from the central port (o), it goes right 8, up 5,
  * left 5, and finally down 3:
  *
  * ...........
@@ -29,7 +29,7 @@
  * .........|.
  * .o-------+.
  * ...........
- * Then, if the second wire's path is U7,R6,D4,L4, it goes up 7, right 6, down 4, and left 4:
+ * Then, if the second wire'directOrbitsOf path is U7,R6,D4,L4, it goes up 7, right 6, down 4, and left 4:
  *
  * ...........
  * .+-----+...
